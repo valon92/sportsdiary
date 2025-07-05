@@ -1,3 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* resources/css/app.css */
+
+/* Importo stilin bazë të Bootstrap CSS */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+/* Importo Bootstrap Icons CSS (nëse i ke instaluar) */
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+/* Nëse ke ndonjë stil tëndin shtesë, shtoje këtu */
