@@ -1,25 +1,26 @@
 <template>
   <Navbar />
-  <GenderFilter @update:gender="handleGenderUpdate" />
   <main class="flex-grow-1">
-    <Home :gender="currentGender" />
+    <router-view></router-view>
   </main>
   <Footer />
 </template>
 
 <script setup>
-import { ref } from 'vue';
 import Navbar from './Components/Navbar.vue';
 import Footer from './Components/Footer.vue';
-import GenderFilter from './Components/GenderFilter.vue';
-import Home from './Pages/Home.vue'; // Importo komponentin Home
+// Nuk kemi më nevojë të importojmë Home.vue apo GenderFilter këtu, pasi ato do të menaxhohen nga router-i ose nga faqet specifike.
+// import Home from './Pages/Home.vue';
+// import GenderFilter from './Components/GenderFilter.vue';
 
-const currentGender = ref('men'); // Vlera fillestare e gjinisë
-
-const handleGenderUpdate = (gender) => {
-  currentGender.value = gender;
-  console.log('app.vue: Gjinia e zgjedhur:', gender);
-};
+// Nuk kemi më nevojë për currentGender apo handleGenderUpdate këtu,
+// pasi filtri i gjinisë do të shfaqet në faqen Home.vue dhe do të menaxhojë logjikën e saj.
+// import { ref } from 'vue';
+// const currentGender = ref('men');
+// const handleGenderUpdate = (gender) => {
+//   currentGender.value = gender;
+//   console.log('app.vue: Gjinia e zgjedhur:', gender);
+// };
 </script>
 
 <style scoped>

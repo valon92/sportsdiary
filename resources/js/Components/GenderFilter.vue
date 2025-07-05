@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex justify-content-center my-4">
+  <div class="d-flex justify-content-center my-4 p-5">
     <div class="btn-group" role="group" aria-label="Gender filter">
       <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" :checked="selectedGender === 'men'" @change="selectGender('men')">
       <label class="btn btn-outline-success" for="btnradio1">Men</label>

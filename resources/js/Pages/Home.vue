@@ -1,6 +1,6 @@
 <template>
   <div class="container my-5">
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <GenderFilter @update:gender="handleGenderUpdate" /> <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
       <div class="col" v-for="sport in filteredSports" :key="sport.id">
         <SportCard
           :sportName="sport.sportName"
@@ -21,20 +21,11 @@
 </template>
 
 <script setup>
-import { ref, computed, defineProps, watch } from 'vue';
+import { ref, computed } from 'vue'; // Fshij defineProps dhe watch
 import SportCard from '../Components/SportCard.vue';
-
-// Definojmë props-in 'gender' që ky komponent do të marrë nga prindi (app.vue)
-const props = defineProps({
-  gender: {
-    type: String,
-    required: true,
-    default: 'men' // Vlera fillestare e gjinisë
-  }
-});
+import GenderFilter from '../Components/GenderFilter.vue'; // Shto importin e GenderFilter
 
 // Të dhëna statike për sportet
-// Këto do të zëvendësohen më vonë me të dhëna nga backend-i
 const allSports = ref([
   {
     id: 1,
@@ -104,14 +95,19 @@ const allSports = ref([
   }
 ]);
 
-// `computed` property qe filtron sportet bazuar ne props.gender
-const filteredSports = computed(() => {
-  return allSports.value.filter(sport => sport.gender === props.gender);
-});
+// Variabël lokale për të mbajtur gjininë e zgjedhur
+const selectedGender = ref('men'); // Vlera fillestare e gjinisë, tani menaxhohet nga Home.vue
 
-// Opsionale: Per te pare ndryshimin e gjinise ne console
-watch(() => props.gender, (newGender) => {
-  console.log('Home.vue mori gjininë e re:', newGender);
+// Funksioni që do të thirret kur GenderFilter dërgon eventin 'update:gender'
+const handleGenderUpdate = (gender) => {
+  selectedGender.value = gender;
+  console.log('Home.vue: Gjinia e zgjedhur:', gender);
+};
+
+
+// `computed` property qe filtron sportet bazuar ne selectedGender.value
+const filteredSports = computed(() => {
+  return allSports.value.filter(sport => sport.gender === selectedGender.value);
 });
 </script>
 
