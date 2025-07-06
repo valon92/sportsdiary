@@ -8,6 +8,7 @@ import Favorites from '../Pages/Favorites.vue';
 import Teams from '../Pages/Teams.vue';
 import Players from '../Pages/Players.vue';
 import Transfers from '../Pages/Transfers.vue';
+import Notifications from '../Pages/Notifications.vue';
 
 const routes = [
   {
@@ -49,6 +50,11 @@ const routes = [
     path: '/transfers', // Rruga për faqen Transfers
     name: 'transfers',
     component: Transfers
+  },
+  {
+    path: '/notifications', // Rruga për faqen Notifications
+    name: 'notifications',
+    component: Notifications
   },
   // Këtu do të shtohen rrugë të tjera në të ardhmen
 ];
