@@ -1,8 +1,9 @@
 // resources/js/router/index.js
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '../Pages/Home.vue';      // Importo komponentin Home
-import Spotlight from '../Pages/Spotlight.vue'; // Këtë do ta krijojmë shpejt
+import Home from '../Pages/Home.vue'; 
+import Spotlight from '../Pages/Spotlight.vue';
 import Results from '../Pages/Results.vue';
+import News from '../Pages/News.vue';
 
 const routes = [
   {
@@ -19,6 +20,11 @@ const routes = [
     path: '/results', // Rruga për faqen Results
     name: 'results',
     component: Results
+  },
+  {
+    path: '/news', // Rruga për faqen News
+    name: 'news',
+    component: News
   },
   // Këtu do të shtohen rrugë të tjera në të ardhmen
 ];
