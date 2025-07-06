@@ -5,6 +5,7 @@ import Spotlight from '../Pages/Spotlight.vue';
 import Results from '../Pages/Results.vue';
 import News from '../Pages/News.vue';
 import Favorites from '../Pages/Favorites.vue';
+import Teams from '../Pages/Teams.vue';
 
 const routes = [
   {
@@ -31,6 +32,11 @@ const routes = [
     path: '/favorites', // Rruga për faqen Favorites
     name: 'favorites',
     component: Favorites
+  },
+  {
+    path: '/teams', // Rruga për faqen Teams
+    name: 'teams',
+    component: Teams
   },
   // Këtu do të shtohen rrugë të tjera në të ardhmen
 ];
