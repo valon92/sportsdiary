@@ -10,6 +10,8 @@ import Players from '../Pages/Players.vue';
 import Transfers from '../Pages/Transfers.vue';
 import Notifications from '../Pages/Notifications.vue';
 import Calendar from '../Pages/Calendar.vue';
+import Login from '../Pages/Auth/Login.vue';
+import Register from '../Pages/Auth/Register.vue';
 
 const routes = [
   {
@@ -61,6 +63,16 @@ const routes = [
     path: '/calendar', // Rruga për faqen Calendar
     name: 'calendar',
     component: Calendar
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: Login
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: Register
   },
   // Këtu do të shtohen rrugë të tjera në të ardhmen
 ];
