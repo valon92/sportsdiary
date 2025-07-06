@@ -9,6 +9,7 @@ import Teams from '../Pages/Teams.vue';
 import Players from '../Pages/Players.vue';
 import Transfers from '../Pages/Transfers.vue';
 import Notifications from '../Pages/Notifications.vue';
+import Calendar from '../Pages/Calendar.vue';
 
 const routes = [
   {
@@ -55,6 +56,11 @@ const routes = [
     path: '/notifications', // Rruga për faqen Notifications
     name: 'notifications',
     component: Notifications
+  },
+  {
+    path: '/calendar', // Rruga për faqen Calendar
+    name: 'calendar',
+    component: Calendar
   },
   // Këtu do të shtohen rrugë të tjera në të ardhmen
 ];
