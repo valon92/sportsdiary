@@ -61,6 +61,54 @@
               <span v-if="transfer.fee" class="badge bg-dark ms-2">Vlera: {{ transfer.fee }}</span>
               <span class="badge bg-secondary ms-2">Data: {{ formatDate(transfer.date) }}</span>
             </div>
+  
+            <div class="interaction-section mt-3 pt-3 border-top d-flex justify-content-around align-items-center">
+              <button @click="toggleLike(transfer.id)" class="btn btn-outline-primary btn-sm flex-fill me-2">
+                <i :class="['bi', transfer.hasLiked ? 'bi-heart-fill' : 'bi-heart']"></i>
+                <span class="ms-1">{{ transfer.likes }}</span>
+              </button>
+              <button @click="openComments(transfer.id)" class="btn btn-outline-secondary btn-sm flex-fill mx-2">
+                <i class="bi bi-chat-dots"></i>
+                <span class="ms-1">{{ transfer.comments }}</span>
+              </button>
+              <button @click="shareTransfer(transfer.id)" class="btn btn-outline-info btn-sm flex-fill ms-2">
+                <i class="bi bi-share"></i>
+                <span class="ms-1">{{ transfer.shares }}</span>
+              </button>
+            </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="modal fade" id="commentsModal" tabindex="-1" aria-labelledby="commentsModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-primary" id="commentsModalLabel">Komente për Transferimin</h5>
+            <button type="button" class="btn-close" @click="hideCommentsModal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div v-if="currentTransferComments.length === 0" class="alert alert-info text-center" role="alert">
+              Asnjë koment ende. Bëhu i pari!
+            </div>
+            <div v-else class="list-group mb-3 comments-list">
+              <div v-for="comment in currentTransferComments" :key="comment.id" class="list-group-item list-group-item-light border-0 py-2">
+                <div class="d-flex w-100 justify-content-between">
+                  <h6 class="mb-1 fw-bold">{{ comment.user }}</h6>
+                  <small class="text-muted">{{ formatDate(comment.date) }}</small>
+                </div>
+                <p class="mb-1">{{ comment.comment }}</p>
+              </div>
+            </div>
+  
+            <div class="comment-input-section mt-4 pt-3 border-top">
+              <h6 class="mb-3 text-secondary">Shto Komentin Tënd</h6>
+              <div class="input-group">
+                <textarea class="form-control" rows="2" placeholder="Shkruaj komentin tënd këtu..." v-model="newCommentText"></textarea>
+                <button class="btn btn-primary" @click="addComment">Posto</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -68,7 +116,8 @@
   </template>
   
   <script setup>
-  import { ref, computed } from 'vue';
+  import { ref, computed, onMounted } from 'vue';
+  import { Modal } from 'bootstrap';
   
   // Të dhënat statike për transferimet
   const allTransfers = ref([
@@ -84,7 +133,11 @@
       toTeamLogo: 'https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg',
       type: 'Blerje',
       fee: '€103M',
-      date: '2023-06-14'
+      date: '2023-06-14',
+      likes: 125,
+      comments: 20,
+      shares: 8,
+      hasLiked: false // Shto këtë pronë për të menaxhuar gjendjen e pëlqimit
     },
     {
       id: 2,
@@ -98,7 +151,11 @@
       toTeamLogo: 'https://upload.wikimedia.org/wikipedia/en/5/53/Arsenal_FC.svg',
       type: 'Blerje',
       fee: '€75M',
-      date: '2023-06-28'
+      date: '2023-06-28',
+      likes: 98,
+      comments: 15,
+      shares: 5,
+      hasLiked: false
     },
     {
       id: 3,
@@ -112,7 +169,11 @@
       toTeamLogo: 'https://upload.wikimedia.org/wikipedia/en/5/53/Arsenal_FC.svg',
       type: 'Blerje',
       fee: '€116M',
-      date: '2023-07-15'
+      date: '2023-07-15',
+      likes: 150,
+      comments: 30,
+      shares: 12,
+      hasLiked: false
     },
     {
       id: 4,
@@ -126,7 +187,11 @@
       toTeamLogo: 'https://upload.wikimedia.org/wikipedia/en/4/47/FC_Barcelona_%28crest%29.svg',
       type: 'Huazim',
       fee: 'N/A',
-      date: '2023-09-01'
+      date: '2023-09-01',
+      likes: 70,
+      comments: 10,
+      shares: 3,
+      hasLiked: false
     },
     {
       id: 5,
@@ -140,7 +205,11 @@
       toTeamLogo: 'https://upload.wikimedia.org/wikipedia/en/a/a2/Real_Madrid_Baloncesto_logo.svg',
       type: 'Blerje',
       fee: 'N/A',
-      date: '2021-07-16'
+      date: '2021-07-16',
+      likes: 45,
+      comments: 5,
+      shares: 1,
+      hasLiked: false
     },
     {
       id: 6,
@@ -154,7 +223,11 @@
       toTeamLogo: 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a7/Paris_Saint-Germain_F.C._logo.svg/1200px-Paris_Saint-Germain_F.C._logo.svg.png',
       type: 'Blerje',
       fee: '€50M',
-      date: '2023-08-12'
+      date: '2023-08-12',
+      likes: 110,
+      comments: 25,
+      shares: 10,
+      hasLiked: false
     }
   ]);
   
@@ -162,6 +235,13 @@
   const selectedSport = ref('all');
   const selectedType = ref('all');
   const searchTerm = ref('');
+  
+  // Variablat për menaxhimin e modalit të komenteve
+  const showCommentsModal = ref(false);
+  const currentTransferComments = ref([]);
+  const newCommentText = ref('');
+  const activeTransferId = ref(null);
+  let commentsModalInstance = null; // Për të ruajtur instancën e modalit
   
   // Llogarit sportet unike të disponueshme
   const availableSports = computed(() => {
@@ -193,6 +273,8 @@
   // Funksion ndihmës për formatimin e datës
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    // Shto një kontroll për vlera inekzistente të datës
+    if (!dateString) return 'Data e Panjohur';
     return new Date(dateString).toLocaleDateString('sq-AL', options);
   };
   
@@ -206,6 +288,100 @@
       default: return 'bg-primary';
     }
   };
+  
+  // Funksionet e ndërveprimit
+  const toggleLike = (transferId) => {
+    const transfer = allTransfers.value.find(t => t.id === transferId);
+    if (transfer) {
+      transfer.likes = transfer.likes + (transfer.hasLiked ? -1 : 1);
+      transfer.hasLiked = !transfer.hasLiked;
+      // Në një aplikacion real, do të bëhej një kërkesë në backend për të ruajtur pëlqimin.
+      console.log(`Transfer ID: ${transferId} - Pëlqimi u toggled. Likes: ${transfer.likes}`);
+    }
+  };
+  
+  const openComments = (transferId) => {
+    activeTransferId.value = transferId;
+    // Këtu do të merrnim komentet nga backend-i për këtë transferim
+    // Për simulim, po i filtrojmë komentet nga një listë e madhe statike.
+    const allStaticComments = [
+      { id: 1, transferId: 1, user: 'Artan', comment: 'Transferim i shkëlqyer! Real Madrid bëri goditje të madhe.', date: '2023-06-15' },
+      { id: 2, transferId: 1, user: 'Erion', comment: 'Shume shpenzime, a ja vlen Bellingham?', date: '2023-06-16' },
+      { id: 3, transferId: 1, user: 'Mimoza', comment: 'Mendoj se do të shkëlqejë në La Liga.', date: '2023-06-17' },
+      { id: 4, transferId: 2, user: 'Besnik', comment: 'Havertz tek Arsenal? Cudi!', date: '2023-06-29' },
+      { id: 5, transferId: 2, user: 'Liridona', comment: 'Lëvizje e mirë për karrierën e tij.', date: '2023-06-30' },
+      { id: 6, transferId: 3, user: 'Dren', comment: 'Rice vlera teper e larte, a thua ia vlen?', date: '2023-07-16' },
+      { id: 7, transferId: 3, user: 'Valbona', comment: 'West Ham humbi nje lojtar fantastik.', date: '2023-07-17' },
+      { id: 8, transferId: 4, user: 'Faton', comment: 'Cancelo te Barca? Huazim i zgjuar.', date: '2023-09-02' },
+      { id: 9, transferId: 5, user: 'Edon', comment: 'Deck kthehet ne Europe, e prisja.', date: '2021-07-17' },
+      { id: 10, transferId: 6, user: 'Fjolla', comment: 'Dembelé te PSG, pritej ky transferim.', date: '2023-08-13' },
+    ];
+    currentTransferComments.value = allStaticComments.filter(comment => comment.transferId === transferId);
+  
+    // Shfaq modale
+    showCommentsModal.value = true;
+    commentsModalInstance.show();
+  };
+  
+  const addComment = () => {
+    if (newCommentText.value.trim() !== '' && activeTransferId.value) {
+      const newComment = {
+        id: Date.now(), // ID unike e thjeshtë
+        user: 'You', // Kjo do të zëvendësohej me emrin e përdoruesit të loguar
+        comment: newCommentText.value.trim(),
+        date: new Date().toISOString().slice(0, 10),
+        transferId: activeTransferId.value // Ruaj ID-në e transferimit
+      };
+      currentTransferComments.value.push(newComment);
+      // Në një aplikacion real, do të dërgohej komentimi në backend.
+      // Dhe do të duhej të përditësohej numri i komenteve në allTransfers.
+      const transfer = allTransfers.value.find(t => t.id === activeTransferId.value);
+      if (transfer) {
+        transfer.comments++;
+      }
+      newCommentText.value = ''; // Pastro fushën e komentit
+      console.log('Komenti u shtua:', newComment);
+    }
+  };
+  
+  const hideCommentsModal = () => {
+    showCommentsModal.value = false;
+    newCommentText.value = ''; // Pastro fushën e komentit
+    activeTransferId.value = null; // Pastro transfer id
+    commentsModalInstance.hide();
+  };
+  
+  const shareTransfer = (transferId) => {
+    const transferLink = `${window.location.origin}/transfers/${transferId}`;
+    navigator.clipboard.writeText(transferLink)
+      .then(() => {
+        alert(`Lidhja e transferimit u kopjua: ${transferLink}`);
+        const transfer = allTransfers.value.find(t => t.id === transferId);
+        if (transfer) {
+          transfer.shares++; // Rrit numrin e shpërndarjeve
+        }
+      })
+      .catch(err => {
+        console.error('Nuk mund të kopjohej lidhja: ', err);
+        alert('Nuk mund të kopjohej lidhja. Ju lutemi provoni manualisht.');
+      });
+  };
+  
+  // Inicializo Bootstrap Modal kur komponenti është montuar
+  onMounted(() => {
+    commentsModalInstance = new Modal(document.getElementById('commentsModal'));
+  
+    // Shto një listener për kur modali mbyllet manualisht nga user-i
+    const commentsModalElement = document.getElementById('commentsModal');
+    commentsModalElement.addEventListener('hidden.bs.modal', () => {
+      // Vetëm pastro gjendjen kur modali mbyllet nga Bootstrap
+      if (showCommentsModal.value) { // Shmange ekzekutimin e dyfishtë
+        showCommentsModal.value = false;
+        newCommentText.value = '';
+        activeTransferId.value = null;
+      }
+    });
+  });
   </script>
   
   <style scoped>
@@ -248,7 +424,7 @@
   }
   
   .team-transfer-info {
-      min-width: 100px; /* Siguron që emrat e ekipeve të mos shtypen shumë */
+    min-width: 100px; /* Siguron që emrat e ekipeve të mos shtypen shumë */
   }
   
   /* Stile shtesë për kërkimin */
@@ -256,6 +432,55 @@
     border-right: none;
   }
   .input-group .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  
+  /* Stile për seksionin e ndërveprimit */
+  .interaction-section .btn {
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .interaction-section .btn i {
+    font-size: 1rem;
+  }
+  
+  .interaction-section .btn span {
+    font-weight: bold;
+  }
+  
+  /* Stile për modalin e komenteve */
+  .comments-list .list-group-item:nth-child(even) {
+    background-color: #f1f1f1; /* Ngjyrë e lehtë alternuese */
+  }
+  
+  .comments-list .list-group-item:last-child {
+    border-bottom-left-radius: .25rem;
+    border-bottom-right-radius: .25rem;
+  }
+  
+  .modal-content {
+    border-radius: 0.75rem;
+    overflow: hidden;
+  }
+  
+  .modal-header {
+    background-color: var(--bs-primary);
+    color: white;
+    border-bottom: none;
+  }
+  
+  .modal-header .btn-close {
+    filter: invert(1); /* Për të bërë X të bardhë */
+  }
+  
+  .comment-input-section .input-group textarea {
+    border-right: none;
+  }
+  .comment-input-section .input-group .btn {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }
