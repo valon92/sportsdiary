@@ -6,6 +6,7 @@ import Results from '../Pages/Results.vue';
 import News from '../Pages/News.vue';
 import Favorites from '../Pages/Favorites.vue';
 import Teams from '../Pages/Teams.vue';
+import Players from '../Pages/Players.vue';
 
 const routes = [
   {
@@ -37,6 +38,11 @@ const routes = [
     path: '/teams', // Rruga për faqen Teams
     name: 'teams',
     component: Teams
+  },
+  {
+    path: '/players', // Rruga për faqen Players
+    name: 'players',
+    component: Players
   },
   // Këtu do të shtohen rrugë të tjera në të ardhmen
 ];
