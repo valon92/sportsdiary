@@ -23,10 +23,10 @@
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link icon-only" to="/results" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Results">
-              <i class="bi bi-trophy-fill"></i>
-            </router-link>
-          </li>
+  <router-link class="nav-link icon-only" to="/results" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Results">
+    <i class="bi bi-trophy-fill"></i>
+  </router-link>
+</li>
           <li class="nav-item">
             <router-link class="nav-link icon-only" to="/news" data-bs-toggle="tooltip" data-bs-placement="bottom" title="News">
               <i class="bi bi-newspaper"></i>

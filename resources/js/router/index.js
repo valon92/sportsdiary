@@ -2,6 +2,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../Pages/Home.vue';      // Importo komponentin Home
 import Spotlight from '../Pages/Spotlight.vue'; // Këtë do ta krijojmë shpejt
+import Results from '../Pages/Results.vue';
 
 const routes = [
   {
@@ -13,6 +14,11 @@ const routes = [
     path: '/spotlight', // Rruga për faqen Spotlight
     name: 'spotlight',
     component: Spotlight
+  },
+  {
+    path: '/results', // Rruga për faqen Results
+    name: 'results',
+    component: Results
   },
   // Këtu do të shtohen rrugë të tjera në të ardhmen
 ];
