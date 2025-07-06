@@ -1,8 +1,9 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
       <router-link class="navbar-brand text-success fw-bold fs-3" to="/">
-        <i class="bi bi-calendar-check-fill me-2"></i> Sports Diary
+       <!-- <i class="bi bi-calendar-check-fill me-2"></i> -->
+         Sportday
       </router-link>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
