@@ -1,6 +1,7 @@
 <template>
   <div class="container my-5">
-    <GenderFilter @update:gender="handleGenderUpdate" /> <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <GenderFilter @update:gender="handleGenderUpdate" />
+     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
       <div class="col" v-for="sport in filteredSports" :key="sport.id">
         <SportCard
           :sportName="sport.sportName"
